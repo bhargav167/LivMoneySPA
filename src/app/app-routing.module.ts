@@ -9,7 +9,9 @@ import { AuthComponent } from "./layouts/auth/auth.component";
 import { DashboardComponent } from "./views/admin/dashboard/dashboard.component";
 import { MapsComponent } from "./views/admin/maps/maps.component";
 import { SettingsComponent } from "./views/admin/settings/settings.component";
-import { TablesComponent } from "./views/admin/tables/tables.component";
+import { TablesComponent } from "./views/admin/tables/tables.component"; 
+import { EmailConfirmComponent } from "./views/auth/Email/EmailConfirm/EmailConfirm.component";
+import { EmailSentComponent } from "./views/auth/Email/EmailSent/EmailSent.component";
 
 // auth views
 import { LoginComponent } from "./views/auth/login/login.component";
@@ -29,7 +31,7 @@ const routes: Routes = [
       { path: "dashboard", component: DashboardComponent },
       { path: "settings", component: SettingsComponent },
       { path: "tables", component: TablesComponent },
-      { path: "maps", component: MapsComponent },
+      { path: "maps", component: MapsComponent }, 
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
     ],
   },
@@ -40,6 +42,8 @@ const routes: Routes = [
     children: [
       { path: "login", component: LoginComponent },
       { path: "register", component: RegisterComponent },
+      { path: "EmailSent", component: EmailSentComponent },
+      { path: "EmailConfirm", component: EmailConfirmComponent },
       { path: "", redirectTo: "login", pathMatch: "full" },
     ],
   },

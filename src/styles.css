@@ -8,3 +8,12 @@
 .text-green-600{
 color: #00C05F;
 }
+.is-invalid{
+    border-color: red;
+}
+.invalid-feedback{
+    color: red;
+}
+.text-white{
+    color: whitesmoke;
+}

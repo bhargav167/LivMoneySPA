@@ -1,5 +1,7 @@
-import { BrowserModule } from "@angular/platform-browser";
+import { BrowserModule } from '@angular/platform-browser'
 import { NgModule } from "@angular/core";
+import { ToastrModule } from 'ngx-toastr';
+
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -47,6 +49,11 @@ import { PagesDropdownComponent } from "./components/dropdowns/pages-dropdown/pa
 import { NotificationDropdownComponent } from "./components/dropdowns/notification-dropdown/notification-dropdown.component";
 import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { UserDropdownComponent } from "./components/dropdowns/user-dropdown/user-dropdown.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
+import { CommonModule } from '@angular/common';
+import { EmailSentComponent } from './views/auth/Email/EmailSent/EmailSent.component';
+import { EmailConfirmComponent } from './views/auth/Email/EmailConfirm/EmailConfirm.component';
 
 @NgModule({
   declarations: [
@@ -84,8 +91,10 @@ import { UserDropdownComponent } from "./components/dropdowns/user-dropdown/user
     IndexComponent,
     LandingComponent,
     ProfileComponent,
+    EmailSentComponent,
+    EmailConfirmComponent
   ],
-  imports: [BrowserModule, AppRoutingModule],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule,CommonModule, ToastrModule.forRoot(), FormsModule, ReactiveFormsModule],
   providers: [],
   bootstrap: [AppComponent],
 })

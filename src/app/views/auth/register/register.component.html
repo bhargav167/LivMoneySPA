@@ -30,19 +30,21 @@
           <div class="text-blueGray-400 text-center mb-3 font-bold">
             <small>Or sign up with credentials</small>
           </div>
-          <form>
+          <form [formGroup]="authUserFields" autocomplete="off" (ngSubmit)="register()">
             <div class="relative w-full mb-3">
               <label
                 class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                htmlFor="grid-password"
-              >
+                htmlFor="grid-password">
                 Name
               </label>
               <input
-                type="email"
-                class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                type="text"
+                formControlName="Name" 
+                [ngClass]="{'is-invalid': authUserFields.get('Name').errors && authUserFields.get('Name').touched}"
+                class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:ring w-full ease-linear transition-all duration-150"
                 placeholder="Name"
               />
+              <small id="nameHelp" *ngIf="authUserFields.get('Name').hasError('required') && authUserFields.get('Name').touched" class="invalid-feedback">Please enter Full Name</small>
             </div>
 
             <div class="relative w-full mb-3">
@@ -54,9 +56,13 @@
               </label>
               <input
                 type="email"
+                formControlName="Email" 
                 class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 placeholder="Email"
               />
+              <small id="nameHelp" *ngIf="authUserFields.get('Email').hasError('required') && authUserFields.get('Email').touched" class="invalid-feedback">Please enter your Email address</small>
+              <small class="invalid-feedback" *ngIf="authUserFields.get('Email').errors?.email">Email address is invalid</small>
+
             </div>
 
             <div class="relative w-full mb-3">
@@ -67,34 +73,41 @@
                 Password
               </label>
               <input
+              formControlName="Password" 
                 type="password"
                 class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 placeholder="Password"
               />
+              <small id="nameHelp" *ngIf="authUserFields.get('Password').hasError('required') && authUserFields.get('Password').touched" class="invalid-feedback">Please enter password</small>
             </div>
 
             <div>
               <label class="inline-flex items-center cursor-pointer">
                 <input
                   id="customCheckLogin"
+                  formControlName="TAC"
                   type="checkbox"
                   class="form-checkbox border-0 text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150 rounded"
                 />
+               
                 <span class="ml-2 text-sm font-semibold text-blueGray-600">
                   I agree with the
                   <a href="javascript:void(0)" class="text-red-600">
                     Privacy Policy
                   </a>
                 </span>
-              </label>
+              </label><br/>
+              <small id="nameHelp" *ngIf="IsTAC==false" class="invalid-feedback">Agree to our Privacy Policy to continue</small>
             </div>
 
             <div class="text-center mt-6">
               <button
-                class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                type="button"
-              >
-                Create Account
+              [disabled]="!authUserFields.valid || btnLoader"
+                class="bg-green-700 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                type="submit">
+                <span *ngIf="this.btnLoader"  class="spinner-border spinner-border-sm" role="status"></span>
+                <span *ngIf="this.btnLoader"  class="load-text"> Please wait...</span>
+                <span *ngIf="!this.btnLoader" class="btn-text"><i class="fa fa-save"></i> Create Account</span>
               </button>
             </div>
           </form>
