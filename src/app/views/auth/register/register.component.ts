@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import {
   FormControl,
   FormGroup,
   FormBuilder,
   Validators
-} from "@angular/forms";
+} from "@angular/forms"; 
+import { SocialAuthService } from "angularx-social-login";
+import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
+
+
 import { Router } from '@angular/router';
 import { AuthUser } from 'src/app/Model/AuthUser';
 import { AuthenticationService } from 'src/app/services/Auth/Authentication.service';
 import { EmailBody } from 'src/app/Model/Email/EmailBody';
-import { EmailSenderService } from 'src/app/services/Email/EmailSender.service';
-import { environment } from 'src/environments/environment';
+import { EmailSenderService } from 'src/app/services/Email/EmailSender.service'; 
+import { getSafePropertyAccessString } from '@angular/compiler';
 
 @Component({
   selector: "app-register",
@@ -19,15 +22,17 @@ import { environment } from 'src/environments/environment';
 })
 export class RegisterComponent implements OnInit {
   authUserFields: FormGroup;
+  googleAuthUserFields: FormGroup;
   authUser: AuthUser;
   email:EmailBody;
   IsTAC:boolean;
+
   public btnLoader: boolean;
-  constructor(private fb: FormBuilder,
+  constructor(private fb: FormBuilder, 
+    private authService: SocialAuthService,
       private _authServicres: AuthenticationService,
       private _emailServices:EmailSenderService,
-      private _router: Router,
-      private toastr: ToastrService) { }
+      private _router: Router) { }
 
   ngOnInit(): void {
     this.createAuthUserForm();
@@ -41,13 +46,15 @@ export class RegisterComponent implements OnInit {
       TAC:[false]
     })
   }
+
+  
   
   //Send Email Method
   SendMail(mail:EmailBody){  
-    this._emailServices.sendmail(mail).subscribe((data: EmailBody) => {
-      
+    this._emailServices.sendmail(mail).subscribe((data: EmailBody) => { 
     })
-  }
+  } 
+  //Custom Registrations
   register() {
     this.btnLoader = true;
     if (this.authUserFields.valid) {
@@ -61,7 +68,7 @@ export class RegisterComponent implements OnInit {
         this.authUser = Object.assign({}, this.authUserFields.value);
         this.authUser.ModOfRegistration = "CustomLogin"; 
         this._authServicres.AuthRegister(this.authUser).subscribe((data:AuthUser) => { 
-          this.toastr.success(`Hi! ${this.authUserFields.get('Name').value} You have successfully register to livmoney`, '', { timeOut: 3000 });
+        //  this.toastr.success(`Hi! ${this.authUserFields.get('Name').value} You have successfully register to livmoney`, '', { timeOut: 3000 });
           //Send Email
           let mail={
             owneremail:'',
@@ -77,11 +84,35 @@ export class RegisterComponent implements OnInit {
           this.createAuthUserForm();
           this._router.navigateByUrl(`/auth/EmailSent?email=${this.authUser.Email}&token=${data.Token}`);
         }, error => {
-          this.toastr.error('Registration Failed!', 'Problem in saving Data', error);
+          //this.toastr.error('Registration Failed!', 'Problem in saving Data', error);
           this.btnLoader = false;
         }, () => {
          });
       }
     }
+  } 
+  // Google Login
+  signInWithGoogle(): void {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+    .then((data: any) => {
+      // Initilized Google Responce
+      this.authUserFields.get('Name').setValue(data.name);
+      this.authUserFields.get('Email').setValue(data.email);
+      this.authUserFields.get('Password').setValue(data.authToken);
+      this.authUserFields.get('ModOfRegistration').setValue(data.provider);
+      this.authUser = Object.assign({}, this.authUserFields.value);
+            if (this.authUserFields.valid) {   
+                this._authServicres.AuthRegister(this.authUser).subscribe((data:AuthUser) => { 
+                //  this.toastr.success(`Hi! ${this.authUserFields.get('Name').value} You have successfully register to livmoney`, '', { timeOut: 3000 }); 
+                  this.authUserFields.reset(); 
+                  this.createAuthUserForm(); 
+                }, error => {
+                  this.authUserFields.reset(); 
+                  this.createAuthUserForm(); 
+                  this.btnLoader = false;
+                }, () => {
+                 });
+            }
+          });
   }
 }

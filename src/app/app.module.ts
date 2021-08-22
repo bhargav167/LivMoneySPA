@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
-import { NgModule } from "@angular/core";
-import { ToastrModule } from 'ngx-toastr';
-
+import { NgModule,ModuleWithProviders } from "@angular/core"; 
+ 
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -49,12 +48,17 @@ import { PagesDropdownComponent } from "./components/dropdowns/pages-dropdown/pa
 import { NotificationDropdownComponent } from "./components/dropdowns/notification-dropdown/notification-dropdown.component";
 import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { UserDropdownComponent } from "./components/dropdowns/user-dropdown/user-dropdown.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+ 
 import { HttpClientModule } from "@angular/common/http";
 import { CommonModule } from '@angular/common';
 import { EmailSentComponent } from './views/auth/Email/EmailSent/EmailSent.component';
 import { EmailConfirmComponent } from './views/auth/Email/EmailConfirm/EmailConfirm.component';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
+import {
+  GoogleLoginProvider,
+  FacebookLoginProvider
+} from 'angularx-social-login';
 @NgModule({
   declarations: [
     AppComponent,
@@ -94,8 +98,27 @@ import { EmailConfirmComponent } from './views/auth/Email/EmailConfirm/EmailConf
     EmailSentComponent,
     EmailConfirmComponent
   ],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule,CommonModule, ToastrModule.forRoot(), FormsModule, ReactiveFormsModule],
-  providers: [],
+  imports: [BrowserModule,SocialLoginModule, AppRoutingModule, HttpClientModule,CommonModule, FormsModule, ReactiveFormsModule],
+  providers: [
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '432376500850-3q3tnat2e3lilsjahjds9mjrt23b9f6a.apps.googleusercontent.com'
+            )
+          },
+          {
+            id: FacebookLoginProvider.PROVIDER_ID,
+            provider: new FacebookLoginProvider('clientId')
+          }
+        ]
+      } as SocialAuthServiceConfig,
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
