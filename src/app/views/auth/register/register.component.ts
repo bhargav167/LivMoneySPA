@@ -10,19 +10,18 @@ import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-logi
 
 
 import { Router } from '@angular/router';
-import { AuthUser } from 'src/app/Model/AuthUser';
+import { AuthUser } from 'src/app/Model/Auth/AuthUser';
 import { AuthenticationService } from 'src/app/services/Auth/Authentication.service';
 import { EmailBody } from 'src/app/Model/Email/EmailBody';
-import { EmailSenderService } from 'src/app/services/Email/EmailSender.service'; 
-import { getSafePropertyAccessString } from '@angular/compiler';
+import { EmailSenderService } from 'src/app/services/Email/EmailSender.service';
+import { AuthUserResponces } from 'src/app/Model/Auth/AuthUserResponces';
 
 @Component({
   selector: "app-register",
   templateUrl: "./register.component.html",
 })
 export class RegisterComponent implements OnInit {
-  authUserFields: FormGroup;
-  googleAuthUserFields: FormGroup;
+  authUserFields: FormGroup; 
   authUser: AuthUser;
   email:EmailBody;
   IsTAC:boolean;
@@ -43,6 +42,7 @@ export class RegisterComponent implements OnInit {
       Email: ['', [Validators.email,Validators.required]],
       Password: ['', Validators.required],
       ModOfRegistration:[],
+      ImageUrl:[''],
       TAC:[false]
     })
   }
@@ -54,6 +54,7 @@ export class RegisterComponent implements OnInit {
     this._emailServices.sendmail(mail).subscribe((data: EmailBody) => { 
     })
   } 
+
   //Custom Registrations
   register() {
     this.btnLoader = true;
@@ -67,9 +68,16 @@ export class RegisterComponent implements OnInit {
         this.btnLoader = true;
         this.authUser = Object.assign({}, this.authUserFields.value);
         this.authUser.ModOfRegistration = "CustomLogin"; 
-        this._authServicres.AuthRegister(this.authUser).subscribe((data:AuthUser) => { 
+        this._authServicres.AuthRegister(this.authUser).subscribe((data:AuthUserResponces) => {
+          if(data.Success==false){
+            this.authUserFields.reset();
+            this.btnLoader = false;
+            this.createAuthUserForm();
+            return alert(data.Status_Message);
+          }
+         
         //  this.toastr.success(`Hi! ${this.authUserFields.get('Name').value} You have successfully register to livmoney`, '', { timeOut: 3000 });
-          //Send Email
+         // Send Email
           let mail={
             owneremail:'',
             useremail:'',
@@ -77,12 +85,12 @@ export class RegisterComponent implements OnInit {
           };
           mail.owneremail='liv@livsolution.co.in';
           mail.useremail=this.authUser.Email;
-          mail.mailBody=`http://localhost:4200/auth/EmailConfirm?email=${this.authUser.Email}&token=${data.Token}`;
+          mail.mailBody=`http://localhost:4200/auth/EmailConfirm?email=${this.authUser.Email}&token=${data.data.Token}`;
           this.SendMail(mail);
           this.authUserFields.reset();
           this.btnLoader = false;
           this.createAuthUserForm();
-          this._router.navigateByUrl(`/auth/EmailSent?email=${this.authUser.Email}&token=${data.Token}`);
+          this._router.navigateByUrl(`/auth/EmailSent?email=${this.authUser.Email}&token=${data.data.Token}`);
         }, error => {
           //this.toastr.error('Registration Failed!', 'Problem in saving Data', error);
           this.btnLoader = false;
@@ -95,17 +103,22 @@ export class RegisterComponent implements OnInit {
   signInWithGoogle(): void {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
     .then((data: any) => {
+      console.log(data);
       // Initilized Google Responce
       this.authUserFields.get('Name').setValue(data.name);
       this.authUserFields.get('Email').setValue(data.email);
       this.authUserFields.get('Password').setValue(data.authToken);
       this.authUserFields.get('ModOfRegistration').setValue(data.provider);
+      this.authUserFields.get('ImageUrl').setValue(data.photoUrl);
+      
       this.authUser = Object.assign({}, this.authUserFields.value);
             if (this.authUserFields.valid) {   
-                this._authServicres.AuthRegister(this.authUser).subscribe((data:AuthUser) => { 
+                this._authServicres.AuthRegister(this.authUser).subscribe((data:AuthUserResponces) => { 
+                localStorage.setItem("AuthUser",JSON.stringify(data));
                 //  this.toastr.success(`Hi! ${this.authUserFields.get('Name').value} You have successfully register to livmoney`, '', { timeOut: 3000 }); 
                   this.authUserFields.reset(); 
                   this.createAuthUserForm(); 
+                  this._router.navigateByUrl(`/admin/dashboard`);
                 }, error => {
                   this.authUserFields.reset(); 
                   this.createAuthUserForm(); 

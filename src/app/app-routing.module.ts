@@ -1,5 +1,7 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
+import { AuthGaurd } from "./Auth/Auth.guard";
+import { LoginGaurd } from "./Auth/Login.guard";
 
 // layouts
 import { AdminComponent } from "./layouts/admin/admin.component";
@@ -27,6 +29,7 @@ const routes: Routes = [
   {
     path: "admin",
     component: AdminComponent,
+    canActivate: [AuthGaurd],
     children: [
       { path: "dashboard", component: DashboardComponent },
       { path: "settings", component: SettingsComponent },
@@ -39,6 +42,7 @@ const routes: Routes = [
   {
     path: "auth",
     component: AuthComponent,
+    canActivate: [LoginGaurd],
     children: [
       { path: "login", component: LoginComponent },
       { path: "register", component: RegisterComponent },
@@ -50,7 +54,7 @@ const routes: Routes = [
   // no layout views
   { path: "profile", component: ProfileComponent },
   { path: "landing", component: LandingComponent },
-  { path: "", component: IndexComponent },
+  { path: "", component: IndexComponent,canActivate: [LoginGaurd] },
   { path: "**", redirectTo: "", pathMatch: "full" },
 ];
 
