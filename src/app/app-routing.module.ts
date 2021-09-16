@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { AuthGaurd } from "./Auth/Auth.guard";
 import { LoginGaurd } from "./Auth/Login.guard";
-
 // layouts
 import { AdminComponent } from "./layouts/admin/admin.component";
 import { AuthComponent } from "./layouts/auth/auth.component";
@@ -23,7 +22,6 @@ import { RegisterComponent } from "./views/auth/register/register.component";
 import { IndexComponent } from "./views/index/index.component";
 import { LandingComponent } from "./views/landing/landing.component";
 import { ProfileComponent } from "./views/profile/profile.component";
-
 const routes: Routes = [
   // admin views
   {
@@ -34,7 +32,7 @@ const routes: Routes = [
       { path: "dashboard", component: DashboardComponent },
       { path: "settings", component: SettingsComponent },
       { path: "tables", component: TablesComponent },
-      { path: "maps", component: MapsComponent }, 
+      { path: "maps", component: MapsComponent },
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
     ],
   },
@@ -52,7 +50,7 @@ const routes: Routes = [
     ],
   },
   // no layout views
-  { path: "profile", component: ProfileComponent },
+  { path: "profile/:id", component: ProfileComponent },
   { path: "landing", component: LandingComponent },
   { path: "", component: IndexComponent,canActivate: [LoginGaurd] },
   { path: "**", redirectTo: "", pathMatch: "full" },

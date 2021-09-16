@@ -102,8 +102,7 @@ export class RegisterComponent implements OnInit {
   // Google Login
   signInWithGoogle(): void {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-    .then((data: any) => {
-      console.log(data);
+    .then((data: any) => { 
       // Initilized Google Responce
       this.authUserFields.get('Name').setValue(data.name);
       this.authUserFields.get('Email').setValue(data.email);

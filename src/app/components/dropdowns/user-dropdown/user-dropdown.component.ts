@@ -41,7 +41,6 @@ export class UserDropdownComponent implements AfterViewInit {
     var user=localStorage.getItem("AuthUser");
     var userInJson=JSON.parse(user);
     this.userInfo=userInJson;
-    console.log(this.userInfo);
   }
 
   LogOut(){
